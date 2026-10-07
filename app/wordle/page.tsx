@@ -1,4 +1,5 @@
 import WordleBuilder from "../../components/WordleBuilder";
+import PageTimeTracker from "@/components/PageTimeTracker";
 
 export default function WordlePage() {
   return (
@@ -18,6 +19,7 @@ export default function WordlePage() {
           phoneme sounds rather than standard spelling.
         </p>
 
+        <PageTimeTracker activityType="WORDLE" />
         <WordleBuilder />
 
       </div>

@@ -72,6 +72,13 @@ export default function Navbar() {
             >
               Settings
             </Link>
+
+            <Link
+              href="/dashboard"
+              className="hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              Dashboard
+            </Link>
           </nav>
 
           {/* Mobile hamburger button */}
@@ -146,6 +153,14 @@ export default function Navbar() {
                 className="rounded-lg px-4 py-3 font-medium hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
               >
                 Settings
+              </Link>
+
+              <Link
+                href="/dashboard"
+                onClick={closeMenu}
+                className="rounded-lg px-4 py-3 font-medium text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              >
+                Dashboard
               </Link>
 
             </div>

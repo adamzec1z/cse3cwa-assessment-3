@@ -1,91 +1,112 @@
-# CSE3CWA Assessment 2 - Phoneme Activity Builder
+# CSE3CWA Assessment 3 — Data-Driven Application and Reporting
 
-This project is a full-stack phoneme activity builder developed for CSE3CWA Assessment 2.
+## Phoneme Activity Builder
 
-The application is designed for teachers preparing phoneme-based classroom activities for Speech Pathology students. It extends the frontend created in Assessment 1 by adding a backend API, database storage, CRUD functionality, validation, health monitoring, and Docker support.
+This project is the third stage of the CSE3CWA Phoneme Activity Builder project.
 
-The application allows teachers to store phoneme-based words and activity configurations, preview playable Wordle and Word Search activities, and generate standalone HTML files.
+Assessment 1 focused on the frontend design and usability of the Wordle and Word Search activities.
 
-## Main Features
+Assessment 2 extended the application by adding a backend API, SQLite database, Prisma ORM, CRUD operations, validation, Docker support and database-driven activity generation.
 
-- Phoneme-based Wordle activity
-- Phoneme-based Word Search activity
-- SQLite database storage
-- Prisma ORM
-- Backend API routes using Next.js
-- Create, Read, Update and Delete functionality
-- Stored Wordle and Word Search configurations
-- Database-driven phoneme words
-- Difficulty settings for Wordle
-- Phoneme hover hints
-- Input validation and error handling
-- Health check API
-- Light and dark themes
-- Responsive navigation
-- Keyboard-accessible controls
-- Standalone HTML generation
-- Docker container support
+Assessment 3 extends the same application further by adding data reporting, operational monitoring, usage tracking, alerts, automated testing, load testing and accessibility evaluation.
 
-## Technology
+GitHub Repository:
+
+https://github.com/adamzec1z/cse3cwa-assessment-3
+
+---
+
+## Technologies Used
 
 - Next.js
 - React
 - TypeScript
 - Tailwind CSS
-- Prisma
+- Prisma ORM
 - SQLite
+- Playwright
+- Apache JMeter
+- Chrome Lighthouse
 - Docker
+- Git and GitHub
 
-## Project Structure
+---
 
-- `app/` contains the main website pages and API routes
-- `app/api/activities/` contains API routes for activity configurations
-- `app/api/words/` contains API routes for phoneme words
-- `app/api/health/` contains the application health check route
-- `components/` contains reusable interface components
-- `lib/prisma.ts` provides the reusable Prisma database connection
-- `prisma/` contains the database schema and migrations
-- `public/` contains static files such as the how-to-use video
-- `Dockerfile` contains the Docker image configuration
-- `.dockerignore` excludes unnecessary local files from the Docker image
+## Main Features
+
+The application contains two phoneme-based classroom activities:
+
+- Phoneme Wordle
+- Phoneme Word Search
+
+Both activities retrieve their words and settings from the SQLite database.
+
+Teachers can configure activities using stored information such as:
+
+- English words
+- Phoneme sequences
+- Activity type
+- Difficulty
+- Hint settings
+- Output settings
+
+The application can also generate standalone HTML versions of the activities.
+
+---
 
 ## Database
 
-The project uses SQLite as the database and Prisma as the ORM.
+The project uses SQLite with Prisma ORM.
 
-Two main models are used.
+The main database models are:
 
 ### Activity
 
-An activity stores information about a Wordle or Word Search configuration, including:
+Stores activity information including:
 
-- activity name
-- activity type
-- difficulty
-- whether phoneme hints are enabled
-- output settings
-- associated words
+- Activity name
+- Activity type
+- Difficulty
+- Hint settings
+- Output settings
+- Related words
+- Creation and update timestamps
 
 ### Word
 
-A word stores:
+Stores:
 
-- English spelling
-- phoneme sequence
-- the activity it belongs to
-- creation and update timestamps
+- English word
+- Phoneme sequence
+- Related activity ID
+- Creation and update timestamps
 
-Each activity can contain multiple words.
+### UsageEvent
 
-## CRUD Functionality
+Assessment 3 adds the `UsageEvent` model.
 
-The backend supports Create, Read, Update and Delete operations.
+This records operational information such as:
+
+- Activity type
+- Event type
+- Page visit duration
+- Generation failures
+- Error messages
+- Event timestamp
+
+This information is used by the dashboard for reporting and monitoring.
+
+---
+
+## API Routes
+
+The project uses Next.js API routes.
 
 ### Activities
 
 `GET /api/activities`
 
-Retrieves stored activities and their words.
+Retrieves saved activities and their related words.
 
 `POST /api/activities`
 
@@ -93,7 +114,7 @@ Creates a new activity.
 
 `PUT /api/activities/[id]`
 
-Updates an existing activity.
+Updates an activity.
 
 `DELETE /api/activities/[id]`
 
@@ -103,11 +124,11 @@ Deletes an activity.
 
 `GET /api/words`
 
-Retrieves stored phoneme words.
+Retrieves stored words.
 
 `POST /api/words`
 
-Creates a new word.
+Creates a word and links it to an activity.
 
 `PUT /api/words/[id]`
 
@@ -117,129 +138,32 @@ Updates an existing word.
 
 Deletes a word.
 
-## Frontend and Backend Integration
+### Usage Tracking
 
-The Wordle and Word Search builders retrieve their activity data from the backend.
+`POST /api/usage`
 
-For Wordle, the application loads a saved `WORDLE` activity and uses the stored English word, phonemes, difficulty and hint setting.
+Records operational events including:
 
-For Word Search, the application loads a saved `WORD_SEARCH` activity and uses the words and phoneme sequences stored in the database.
+- `GENERATION_SUCCESS`
+- `GENERATION_FAILED`
+- `PAGE_VISIT`
 
-The standalone HTML files are also generated using the database-loaded values instead of only fixed examples.
+### Dashboard
 
-## Validation and Error Handling
+`GET /api/dashboard`
 
-The API includes validation for invalid or incomplete requests.
+Calculates and returns statistics used by the dashboard.
 
-Examples include:
+### Health Check
 
-- missing required fields return `400 Bad Request`
-- invalid data types return `400 Bad Request`
-- nonexistent activity IDs return `404 Not Found`
-- unexpected database or server errors return `500 Internal Server Error`
+`GET /health`
 
-This helps prevent invalid phoneme records from being stored.
+Returns a `200 OK` response when the application is running.
 
-## Health Check
+Example response:
 
-The application includes a health endpoint:
-
-`GET /api/health`
-
-A successful request returns:
-
-`{"status":"ok","message":"Application is healthy"}`
-
-with a `200 OK` response.
-
-## How to Run Locally
-
-Install the project dependencies:
-
-`npm install`
-
-Generate the Prisma client:
-
-`npx prisma generate`
-
-Apply the database migrations:
-
-`npx prisma migrate dev`
-
-Start the development server:
-
-`npm run dev`
-
-Then open:
-
-`http://localhost:3000`
-
-If PowerShell blocks the standard npm command on Windows, use:
-
-`npm.cmd install`
-
-`npm.cmd run dev`
-
-## Running with Docker
-
-Docker Desktop must be installed and running.
-
-Build the Docker image:
-
-`docker build -t cse3cwa-assessment-2 .`
-
-Run the container:
-
-`docker run --name cse3cwa-app -p 3001:3000 cse3cwa-assessment-2`
-
-Then open:
-
-`http://localhost:3001`
-
-The health endpoint can also be tested inside Docker:
-
-`http://localhost:3001/api/health`
-
-The Docker image uses Node.js 22 and includes the required build tools for the SQLite driver.
-
-## Accessibility
-
-The project includes several accessibility features:
-
-- keyboard-accessible buttons and controls
-- visible focus states
-- ARIA labels for phoneme buttons
-- phoneme hover hints
-- responsive layouts
-- live feedback messages
-- readable contrast and spacing
-
-## GitHub
-
-Assessment 2 repository:
-
-`https://github.com/adamzec1z/cse3cwa-assessment-2`
-
-The repository includes commits showing the development of the backend, database integration, Wordle and Word Search integration, validation, health checking and Docker support.
-
-## References
-
-React. (n.d.). *Thinking in React*. React. https://react.dev/learn/thinking-in-react
-
-Vercel. (2026). *Next.js documentation: App Router*. Next.js. https://nextjs.org/docs/app
-
-Prisma. (2026). *Prisma ORM documentation*. Prisma. https://www.prisma.io/docs/orm
-
-Docker. (2026). *Docker documentation*. Docker. https://docs.docker.com/
-
-Tailwind Labs. (n.d.). *Responsive design*. Tailwind CSS. https://tailwindcss.com/docs/responsive-design
-
-World Wide Web Consortium. (n.d.). *How to meet WCAG (Web Content Accessibility Guidelines): Quick reference*. Web Accessibility Initiative. https://www.w3.org/WAI/WCAG22/quickref/
-
-World Wide Web Consortium. (n.d.). *Developing a keyboard interface*. Web Accessibility Initiative. https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/
-
-## Generative AI Acknowledgement
-
-Generative AI tools, including ChatGPT, were used during the development of this assessment to assist with troubleshooting, explaining programming concepts, suggesting code structures, debugging errors, and improving documentation.
-
-All generated suggestions were reviewed, tested, modified where necessary, and integrated into the project by the student. The final application was tested locally and within Docker to confirm that the implemented functionality worked as intended.
+```json
+{
+  "status": "ok",
+  "message": "Application is healthy"
+}

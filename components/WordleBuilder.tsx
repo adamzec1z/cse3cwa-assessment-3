@@ -335,6 +335,59 @@ export default function WordleBuilder() {
     setCorrect(false);
   }
 
+  async function recordGeneration(
+  eventType: "GENERATION_SUCCESS" | "GENERATION_FAILED",
+  errorMessage?: string
+) {
+  try {
+    const response = await fetch("/api/usage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        activityType: "WORDLE",
+        eventType,
+        errorMessage,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to record Wordle generation.");
+    }
+  } catch (error) {
+    console.error("Usage tracking error:", error);
+  }
+}
+
+async function handleGenerateHtml() {
+  try {
+    if (targetWord.length === 0) {
+      setMessage("There is no saved word to generate.");
+
+      await recordGeneration(
+        "GENERATION_FAILED",
+        "No saved Wordle word available."
+      );
+
+      return;
+    }
+
+    generateHtml();
+
+    await recordGeneration("GENERATION_SUCCESS");
+  } catch (error) {
+    console.error("Wordle generation error:", error);
+
+    setMessage("Failed to generate Wordle HTML.");
+
+    await recordGeneration(
+      "GENERATION_FAILED",
+      "Wordle HTML generation failed."
+    );
+  }
+}
+
   function generateHtml() {
     if (
       targetWord.length === 0
@@ -1237,7 +1290,7 @@ export default function WordleBuilder() {
 
           <button
             type="button"
-            onClick={generateHtml}
+            onClick={handleGenerateHtml}
             disabled={
               targetWord.length === 0
             }

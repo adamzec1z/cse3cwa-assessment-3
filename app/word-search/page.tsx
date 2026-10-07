@@ -1,4 +1,5 @@
 import WordSearchBuilder from "../../components/WordSearchBuilder";
+import PageTimeTracker from "@/components/PageTimeTracker";
 
 export default function WordSearchPage() {
   return (
@@ -18,6 +19,7 @@ export default function WordSearchPage() {
           phoneme recognition and classroom literacy practice.
         </p>
 
+        <PageTimeTracker activityType="WORD_SEARCH" />
         <WordSearchBuilder />
 
       </div>

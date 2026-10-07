@@ -198,6 +198,59 @@ export default function WordSearchBuilder() {
     setMessage("");
   }
 
+  async function recordGeneration(
+  eventType: "GENERATION_SUCCESS" | "GENERATION_FAILED",
+  errorMessage?: string
+) {
+  try {
+    const response = await fetch("/api/usage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        activityType: "WORD_SEARCH",
+        eventType,
+        errorMessage,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to record Word Search generation.");
+    }
+  } catch (error) {
+    console.error("Usage tracking error:", error);
+  }
+}
+
+  async function handleGenerateHtml() {
+    try {
+      if (words.length === 0) {
+        setMessage("There are no saved words to generate.");
+
+        await recordGeneration(
+          "GENERATION_FAILED",
+          "No saved Word Search words available."
+        );
+
+        return;
+      }
+
+      generateHtml();
+
+      await recordGeneration("GENERATION_SUCCESS");
+    } catch (error) {
+      console.error("Word Search generation error:", error);
+
+      setMessage("Failed to generate Word Search HTML.");
+
+      await recordGeneration(
+        "GENERATION_FAILED",
+        "Word Search HTML generation failed."
+      );
+    }
+  }
+
   function generateHtml() {
     if (words.length === 0) {
       setMessage(
@@ -1113,7 +1166,7 @@ export default function WordSearchBuilder() {
 
           <button
             type="button"
-            onClick={generateHtml}
+            onClick={handleGenerateHtml}
             disabled={words.length === 0}
             className="rounded-lg bg-slate-900 px-6 py-3 font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-offset-2"
           >

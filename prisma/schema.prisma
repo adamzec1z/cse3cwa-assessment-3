@@ -33,3 +33,12 @@ model Activity {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+model UsageEvent {
+  id            Int @id @default(autoincrement())
+  activityType  String
+  eventType     String
+  duration      Int?
+  errorMessage  String?
+  createdAt     DateTime @default(now()) 
+}
